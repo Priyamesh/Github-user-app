@@ -2,7 +2,7 @@
 import React, { useState } from "react"
 import { BrowserRouter } from "react-router-dom";
 import './App.css';
-import AddContacts from './components/AddContacts'
+import AddUsers from './components/AddUsers'
 import UserCard from './components/UserCard'
 import Router from "./Router";
 
@@ -12,7 +12,7 @@ function App() {
     <div>
       <BrowserRouter>
         <Router />
-        {/* <AddContacts /> */}
+        {/* <AddUsers /> */}
         {/* <UserCard /> */}
       </BrowserRouter>
     </div>

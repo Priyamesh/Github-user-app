@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const AddContacts = () => {
+const AddUsers = () => {
 
     const [userName, setUserName] = useState("")
     const [users, setUsers] = useState([])
@@ -106,4 +106,4 @@ const AddContacts = () => {
     );
 }
 
-export default AddContacts
+export default AddUsers
