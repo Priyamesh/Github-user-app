@@ -11,34 +11,41 @@ const AddUsers = () => {
     //to load all the user from localstorage
     useEffect(() => {
         if (localStorage.getItem('github_users') != null) {
-            setUsers(JSON.parse(localStorage.getItem('github_users')))
+            const github_users = JSON.parse(localStorage.getItem('github_users'))
+            const users_list = Object.values(github_users);
+            setUsers(users_list)
         }
     }, [])
 
-    //function for input
+    //function for setting username from input box
     const onChangeHandler = (e) => {
         setUserName(e.target.value)
     }
 
+    //getiing user from github Api
     const getUser = async () => {
         let data = null
+        let github_users = {}
+        let users_list = []
         try {
             data = await callApi(`https://api.github.com/users/${userName}`)
         } catch (error) {
             alert("Invalid Username")
         }
-        let users_list = []
         if (localStorage.getItem('github_users') != null) {
-            users_list = JSON.parse(localStorage.getItem('github_users'))
+            github_users = JSON.parse(localStorage.getItem('github_users'))
+            users_list = Object.values(github_users);
         }
-        users_list.push(data)
+        if (!(userName in github_users)) {
+            users_list.push(data)
+        }
         setUsers(users_list)
-        console.log(users);
-        localStorage.setItem('github_users', JSON.stringify(users_list))
+        github_users[userName] = data
+        localStorage.setItem('github_users', JSON.stringify(github_users))
 
     }
 
-    //function for api call to github to fetch user detail
+    //function to handle gform submit
     const onSubmitHandler = (e) => {
         e.preventDefault()
         getUser()
