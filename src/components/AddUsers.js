@@ -85,7 +85,7 @@ const AddUsers = () => {
                                 className="btn btn-primary"
                                 style={{ minWidth: '90px', maxHeight: '38px', position: 'relative' }}
                                 onClick={onSubmitHandler}
-                                disabled={isLoading}
+                                disabled={isLoading || isEmpty(userName)}
                             >
                                 {isLoading ? (
                                     <div>
