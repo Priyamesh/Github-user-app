@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import UserCard from './UserCard'
 import { callApi } from '../utils/callApi'
-import LoaderComp from "./LoaderComp";
+import { isEmpty } from 'lodash';
 
 const AddUsers = () => {
 
@@ -32,18 +32,18 @@ const AddUsers = () => {
         try {
             data = await callApi(`https://api.github.com/users/${userName}`)
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            if (localStorage.getItem('github_users') != null) {
+            if (!isEmpty(localStorage.getItem('github_users'))) {
                 github_users = JSON.parse(localStorage.getItem('github_users'))
                 users_list = Object.values(github_users);
             }
+            //restrict duplicate user and null user UsersCard
             if (!(userName in github_users) && data != null) {
                 users_list.push(data)
             }
             setUsers(users_list.reverse())
             github_users[userName] = data
             localStorage.setItem('github_users', JSON.stringify(github_users))
-
-            console.log("user_list", users_list);
+            setUserName("")
         } catch (error) {
             alert("Invalid Username")
         }
@@ -55,6 +55,7 @@ const AddUsers = () => {
         e.preventDefault()
         getUser()
     }
+    console.log(users);
     return (
         <>
             {/* input form */}
@@ -79,19 +80,28 @@ const AddUsers = () => {
                             />
                         </div>
                         <div>
-                            <button type="submit" className="btn btn-primary">
-                                Get User
+                            <button
+                                type="submit"
+                                className="btn btn-primary"
+                                style={{ minWidth: '90px', maxHeight: '38px', position: 'relative' }}
+                                onClick={onSubmitHandler}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <div>
+                                        <div className="spinner-border" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                ) : ('Get User')}
                             </button>
                         </div>
+
                     </form>
                 </div>
             </div>
 
-            {isLoading ? (
-                <div style={{ width: "100px", margin: "auto", }}>
-                    <LoaderComp />
-                </div>
-            ) : (
+            {
                 //if isloading is false: render cards
                 <div className="container">
                     <div className="row">
@@ -100,7 +110,7 @@ const AddUsers = () => {
                         ))}
                     </div >
                 </div >
-            )}
+            }
         </>
     );
 }
