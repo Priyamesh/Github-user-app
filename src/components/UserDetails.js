@@ -14,29 +14,34 @@ const UserDetails = () => {
 
 
     const getRepos = async (user, user_id) => {
-        const users_local_storage = localStorage.getItem(user_id)
+        let users_local_storage = JSON.parse(localStorage.getItem('github_users_details'))
+        let users_repos = users_local_storage?.[`${user_id}_repos`]
         setIsLoadingRepo(true);
-        if (isEmpty(users_local_storage)) {
+        if (isEmpty(users_repos)) {
             const data = await callApi(`https://api.github.com/users/${user.login}/repos`)
             setRepos(data)
-            localStorage.setItem(user_id, JSON.stringify(data))
-        } else {
-            setRepos(JSON.parse(users_local_storage))
+            users_local_storage[`${user_id}_repos`] = data
+            localStorage.setItem('github_users_details', JSON.stringify(users_local_storage))
+        }
+        else {
+            setRepos(users_repos)
         }
         await new Promise((resolve) => setTimeout(resolve, 1000));
         setIsLoadingRepo(false);
     }
 
     const getFollowers = async (user, user_id) => {
+        let users_local_storage = JSON.parse(localStorage.getItem('github_users_details'))
+        let users_followers = users_local_storage?.[`${user_id}_followers`]
         setIsLoadingFollowers(true)
-        if (isEmpty(localStorage.getItem(`${user_id}followers`))) {
+        if (isEmpty(users_followers)) {
             const data = await callApi(user.followers_url)
             setFollowers(data)
-            localStorage.setItem(`${user_id}followers`, JSON.stringify(data))
+            users_local_storage[`${user_id}_followers`] = data
+            localStorage.setItem('github_users_details', JSON.stringify(users_local_storage))
         }
         else {
-            let data = JSON.parse(localStorage.getItem(`${user_id}followers`))
-            setFollowers(data)
+            setFollowers(users_followers)
         }
         await new Promise((resolve) => setTimeout(resolve, 1000));
         setIsLoadingFollowers(false)
@@ -44,14 +49,16 @@ const UserDetails = () => {
 
     useEffect(() => {
         let user_id = searchParams.get("user_id");
-
-        let user = null
         if (!isEmpty(localStorage.getItem('github_users'))) {
             let user_list = JSON.parse(localStorage.getItem('github_users'))
-            user = find(user_list, { 'id': Number(user_id) })
+            const user = find(user_list, { 'id': Number(user_id) })
+
+            if (isEmpty(localStorage.getItem('github_users_details'))) {
+                localStorage.setItem('github_users_details', JSON.stringify({}))
+            }
+            getRepos(user, user_id)
+            getFollowers(user, user_id)
         }
-        getRepos(user, user_id)
-        getFollowers(user, user_id)
     }, [])
 
     return (
