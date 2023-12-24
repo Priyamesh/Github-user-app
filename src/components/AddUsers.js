@@ -14,7 +14,7 @@ const AddUsers = () => {
         if (localStorage.getItem('github_users') != null) {
             const github_users = JSON.parse(localStorage.getItem('github_users'))
             const users_list = Object.values(github_users);
-            setUsers(users_list)
+            setUsers(users_list.reverse())
         }
     }, [])
 
@@ -39,7 +39,7 @@ const AddUsers = () => {
             if (!(userName in github_users) && data != null) {
                 users_list.push(data)
             }
-            setUsers(users_list)
+            setUsers(users_list.reverse())
             github_users[userName] = data
             localStorage.setItem('github_users', JSON.stringify(github_users))
 
@@ -60,8 +60,10 @@ const AddUsers = () => {
             {/* input form */}
             <div className="container my-3">
                 <div className="row justify-content-center">
-                    <h2 className="row justify-content-center">Github Profile Fetch</h2>
-                    <form className="col-md-6 g-3 text-center d-flex" id="git-form" onSubmit={onSubmitHandler}>
+                    <h2 className="row justify-content-center">GitHub User Explorer</h2>
+                    <h5 className="row justify-content-center">Discover User Details, Repositories, and Followers</h5>
+
+                    <form className="col-md-4 g-3 text-center d-flex" id="git-form" onSubmit={onSubmitHandler}>
                         <div className="flex-grow-1 me-2">
                             <label htmlFor="gitusername" className="visually-hidden">
                                 Username

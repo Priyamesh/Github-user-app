@@ -57,8 +57,8 @@ const UserDetails = () => {
     return (
         <div className="container mt-3">
             <div className="row">
-                <div className="col-md-6">
-                    <h2>List of Repos</h2>
+                <div className="col-md-6 ">
+                    <h2>List of Repository</h2>
                     {isLoadingRepo ? (
                         <div style={{ width: "100px", margin: "auto", }}>
                             <LoaderComp />
@@ -66,16 +66,17 @@ const UserDetails = () => {
                     ) : (
                         //if isloadingRepo is false: render rpos
                         <div>
-                            {
-                                repos.map((repo, idx) => (
-                                    <div key={idx}>
-                                        <ul className="list-group list-group-flush">
-                                            <li className="list-group-item">
+                            <table className="table table-hover">
+                                <tbody>
+                                    {repos.map((repo, idx) => (
+                                        <tr key={idx}>
+                                            <td>
                                                 <a href={repo.html_url}>{repo.name}</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                ))}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </div>
@@ -88,22 +89,23 @@ const UserDetails = () => {
                     ) : (
                         //if isloadingFollowers is false: render rpos
                         <div>
-                            {followers.map((follower, idx) => (
-                                <div key={idx}>
-                                    <ul className="list-group list-group-flush">
-                                        <li className="list-group-item">
-                                            <a href={follower.html_url}>{follower.login}</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            ))}
+                            <table className="table table-hover">
+                                <tbody>
+                                    {followers.map((follower, idx) => (
+                                        <tr key={idx}>
+                                            <td>
+                                                <a href={follower.html_url}>{follower.login}</a>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
-
 }
 
 export default UserDetails

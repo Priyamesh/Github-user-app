@@ -15,7 +15,7 @@ const UserCard = ({ user, idx }) => {
                                 style={{ width: '3rem', height: '3rem', objectFit: 'cover' }}
                             />
                             <h6 className="card-title text-center">
-                                <a href={user.html_url} className="card-link">{user.name}</a>
+                                <a href={user.html_url} className="card-link">{user.login}</a>
                             </h6>
                         </div>
                         <ul className="list-group list-group-flush">
