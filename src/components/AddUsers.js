@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import UserCard from './UserCard'
 import { callApi } from '../utils/callApi'
+import LoaderComp from "./LoaderComp";
 
 const AddUsers = () => {
 
     const [userName, setUserName] = useState("")
     const [users, setUsers] = useState([])
+    const [isLoading, setIsLoading] = useState(false);
 
     //to load all the user from localstorage
     useEffect(() => {
@@ -27,22 +28,26 @@ const AddUsers = () => {
         let data = null
         let github_users = {}
         let users_list = []
+        setIsLoading(true);
         try {
             data = await callApi(`https://api.github.com/users/${userName}`)
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            if (localStorage.getItem('github_users') != null) {
+                github_users = JSON.parse(localStorage.getItem('github_users'))
+                users_list = Object.values(github_users);
+            }
+            if (!(userName in github_users) && data != null) {
+                users_list.push(data)
+            }
+            setUsers(users_list)
+            github_users[userName] = data
+            localStorage.setItem('github_users', JSON.stringify(github_users))
+
+            console.log("user_list", users_list);
         } catch (error) {
             alert("Invalid Username")
         }
-        if (localStorage.getItem('github_users') != null) {
-            github_users = JSON.parse(localStorage.getItem('github_users'))
-            users_list = Object.values(github_users);
-        }
-        if (!(userName in github_users)) {
-            users_list.push(data)
-        }
-        setUsers(users_list)
-        github_users[userName] = data
-        localStorage.setItem('github_users', JSON.stringify(github_users))
-
+        setIsLoading(false);
     }
 
     //function to handle gform submit
@@ -50,7 +55,6 @@ const AddUsers = () => {
         e.preventDefault()
         getUser()
     }
-
     return (
         <>
             {/* input form */}
@@ -81,16 +85,20 @@ const AddUsers = () => {
                 </div>
             </div>
 
-
-
-            {/* Rendering users card */}
-            <div className="container">
-                <div className="row">
-                    {users.map((user, idx) => (
-                        <UserCard user={user} key={idx} />
-                    ))}
+            {isLoading ? (
+                <div style={{ width: "100px", margin: "auto", }}>
+                    <LoaderComp />
+                </div>
+            ) : (
+                //if isloading is false: render cards
+                <div className="container">
+                    <div className="row">
+                        {users.map((user, idx) => (
+                            <UserCard user={user} key={idx} />
+                        ))}
+                    </div >
                 </div >
-            </div >
+            )}
         </>
     );
 }

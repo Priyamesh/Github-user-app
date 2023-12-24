@@ -2,16 +2,20 @@ import { find, isEmpty } from 'lodash';
 import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom';
 import { callApi } from '../utils/callApi';
+import LoaderComp from "./LoaderComp";
 
 const UserDetails = () => {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [repos, setRepos] = useState([])
     const [followers, setFollowers] = useState([])
+    const [isLoadingRepo, setIsLoadingRepo] = useState(false);
+    const [isLoadingFollowers, setIsLoadingFollowers] = useState(false);
 
 
     const getRepos = async (user, user_id) => {
         const users_local_storage = localStorage.getItem(user_id)
+        setIsLoadingRepo(true);
         if (isEmpty(users_local_storage)) {
             const data = await callApi(`https://api.github.com/users/${user.login}/repos`)
             setRepos(data)
@@ -19,9 +23,12 @@ const UserDetails = () => {
         } else {
             setRepos(JSON.parse(users_local_storage))
         }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setIsLoadingRepo(false);
     }
 
     const getFollowers = async (user, user_id) => {
+        setIsLoadingFollowers(true)
         if (isEmpty(localStorage.getItem(`${user_id}followers`))) {
             const data = await callApi(user.followers_url)
             setFollowers(data)
@@ -31,6 +38,8 @@ const UserDetails = () => {
             let data = JSON.parse(localStorage.getItem(`${user_id}followers`))
             setFollowers(data)
         }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setIsLoadingFollowers(false)
     }
 
     useEffect(() => {
@@ -50,28 +59,46 @@ const UserDetails = () => {
             <div className="row">
                 <div className="col-md-6">
                     <h2>List of Repos</h2>
-                    {
-                        repos.map((repo, idx) => (
-                            <div key={idx}>
-                                <ul className="list-group list-group-flush">
-                                    <li className="list-group-item">
-                                        <a href={repo.html_url}>{repo.name}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        ))}
+                    {isLoadingRepo ? (
+                        <div style={{ width: "100px", margin: "auto", }}>
+                            <LoaderComp />
+                        </div>
+                    ) : (
+                        //if isloadingRepo is false: render rpos
+                        <div>
+                            {
+                                repos.map((repo, idx) => (
+                                    <div key={idx}>
+                                        <ul className="list-group list-group-flush">
+                                            <li className="list-group-item">
+                                                <a href={repo.html_url}>{repo.name}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                ))}
+                        </div>
+                    )}
                 </div>
                 <div className="col-md-6">
                     <h2>List of Followers</h2>
-                    {followers.map((follower, idx) => (
-                        <div key={idx}>
-                            <ul className="list-group list-group-flush">
-                                <li className="list-group-item">
-                                    <a href={follower.html_url}>{follower.login}</a>
-                                </li>
-                            </ul>
+                    {isLoadingFollowers ? (
+                        <div style={{ width: "100px", margin: "auto", }}>
+                            <LoaderComp />
                         </div>
-                    ))}
+                    ) : (
+                        //if isloadingFollowers is false: render rpos
+                        <div>
+                            {followers.map((follower, idx) => (
+                                <div key={idx}>
+                                    <ul className="list-group list-group-flush">
+                                        <li className="list-group-item">
+                                            <a href={follower.html_url}>{follower.login}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
