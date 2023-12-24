@@ -90,7 +90,7 @@ const UserDetails = () => {
                                     {!isEmpty(repos) ? repos.map((repo, idx) => (
                                         <tr key={idx}>
                                             <td>
-                                                <a href={repo.html_url}>{repo.name}</a>
+                                                <a href={repo.html_url} target={"_blank"} > {repo.name}</a>
                                             </td>
                                         </tr>
                                     )) :
@@ -118,7 +118,7 @@ const UserDetails = () => {
                                     {!isEmpty(followers) ? followers.map((follower, idx) => (
                                         <tr key={idx}>
                                             <td>
-                                                <a href={follower.html_url}>{follower.login}</a>
+                                                <a href={follower.html_url} target={"_blank"}> {follower.login} </a>
                                             </td>
                                         </tr>
                                     )) :
