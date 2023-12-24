@@ -38,7 +38,14 @@
 }
 
 body {
-  background-color: #f0f0f0; /* Replace with your preferred background color */
-  margin: 0; /* Remove default margin to ensure full coverage of the background */
-  padding: 0; /* Remove default padding */
+  background-color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+}
+
+/* effect for hover on user card */
+.user-card:hover {
+  box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+  transition: box-shadow 0.3s, transform 0.3s;
 }
